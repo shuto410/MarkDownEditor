@@ -1,30 +1,4 @@
-import { convertFromRaw, Editor, EditorState, RawDraftContentBlock, RichUtils } from 'draft-js';
 import React, { useEffect, useState } from "react"
-
-// interface TextEditorProps {
-//   text: string;
-//   fileName?: string;
-// }
-
-// const createEditorState = (text: string) => EditorState.createWithContent(
-//   convertFromRaw({
-//     entityMap: {},
-//     blocks: convertStringToBlocks(text),
-//   })
-// )
-
-// const convertStringToBlocks = (text: string): RawDraftContentBlock[] => {
-//   const blocks = text.split(/\r\n|\n/).map((line, index): RawDraftContentBlock => ({
-//     key: `${index}`,
-//     text: line,
-//     type: "unstyled",
-//     depth: 0,
-//     entityRanges: [],
-//     inlineStyleRanges: [],
-//     data: {},
-//   }))
-//   return blocks;
-// }
 
 const renderBlock = (block: EditorBlock) => {
   if (!block.text) {
