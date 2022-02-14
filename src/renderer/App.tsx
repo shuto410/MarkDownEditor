@@ -21,10 +21,6 @@ const App = () => {
   const [text, setText] = useState('');
   const [fileName, setFileName] = useState('');
 
-  // const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setText(e.currentTarget.value);
-  // }, []);
-
   const handleFileSave = useCallback(() => {
     if (fileName) {
       saveFile(fileName, text);

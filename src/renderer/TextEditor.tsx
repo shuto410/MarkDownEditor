@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { FormEvent, useEffect, useRef, useState } from "react"
 
 const renderBlock = (block: EditorBlock) => {
+  console.log('in render block: ', block.text)
   if (!block.text) {
     return (<span><br/></span>);
   }
@@ -17,6 +18,10 @@ const renderBlock = (block: EditorBlock) => {
 export const TextEditor = () => {
   const [editorBlocks, setEditorBlocks] = useState<EditorBlock[]>([{text: 'New line', type: 'H1'}]);
   const [sendingCaretToNewline, setSendingCaretToNewline] = useState(false);
+  const blockRefs: React.MutableRefObject<React.RefObject<HTMLDivElement>[]> = useRef([]);
+  editorBlocks.forEach((_, i) => {
+      blockRefs.current[i] = React.createRef();
+  });
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -28,12 +33,20 @@ export const TextEditor = () => {
   }
 
   useEffect(() => {
+    // blockRefs.current.forEach(ref => {
+    //   ref.current.onchange((e) => {
+    //     console.log();
+    //   })
+    // })
+  })
+
+  useEffect(() => {
     if (!sendingCaretToNewline) {
       return;
     }
     const selection = window.getSelection();
     const newNode = selection.focusNode.parentNode.parentNode.parentNode.lastChild.firstChild;
-    console.log(newNode)
+    // console.log(newNode)
     const range = new Range();
     range.setStart(newNode, 0);
     range.setEnd(newNode, 0);
@@ -44,16 +57,27 @@ export const TextEditor = () => {
     setSendingCaretToNewline(false);
   }, [sendingCaretToNewline])
 
+  const updateText = (e: FormEvent<HTMLDivElement>) => {
+
+    const selection = window.getSelection();
+    const focusNode = selection.focusNode;
+    const newBlockText = focusNode.textContent;
+    const blockId = Number(focusNode.parentElement.parentElement.id);
+    const newEditorBlocks = [...editorBlocks];
+    newEditorBlocks[blockId].text = newBlockText
+    setEditorBlocks(newEditorBlocks);
+    console.log(editorBlocks);
+  }
+
   return (
     <>
-      <div contentEditable onKeyDown={handleKeyPress} suppressContentEditableWarning={true}>
+      <div contentEditable onKeyDown={handleKeyPress} onInput={updateText} suppressContentEditableWarning={true}>
         {
-          editorBlocks.map((block, index) => (<div id={String(index)}>
+          editorBlocks.map((block, index) => (<div key={index} id={String(index)} ref={blockRefs.current[index]}>
             {renderBlock(block)} 
           </div>))
         }
       </div>
-      {/* <div contentEditable onKeyDown={(e) => handleKeyPress(e)}>{props.text}</div> */}
     </>
   );
 };
